@@ -1,11 +1,15 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:medhealth/network/api/url_api.dart';
 import 'package:medhealth/pages/Login_Page.dart';
 import 'package:medhealth/theme.dart';
 import 'package:medhealth/widget/button_primary.dart';
 import 'package:medhealth/widget/general_logo_space.dart';
+import 'package:medhealth/widget/my_dialog.dart';
+import 'package:medhealth/widget/show_progress.dart';
 import '../theme.dart';
 import 'package:http/http.dart' as http;
 
@@ -15,6 +19,13 @@ class RegisterPages extends StatefulWidget {
 }
 
 class _RegisterPagesState extends State<RegisterPages> {
+  double lat, lng;
+  @override
+  void initState() {
+    super.initState();
+    checkPermission();
+  }
+
   TextEditingController fullNameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController phoneController = TextEditingController();
@@ -28,6 +39,62 @@ class _RegisterPagesState extends State<RegisterPages> {
     });
   }
 
+//การใช้ geolocation ฟังชั่น เช็คโลเคชัน เปิด หรือ ปิด
+  Future<Null> checkPermission() async {
+    bool locationService;
+    LocationPermission locationPermission;
+
+    locationService = await Geolocator.isLocationServiceEnabled();
+    if (locationService) {
+      print('Service Location Open');
+
+      locationPermission = await Geolocator.checkPermission();
+      if (locationPermission == LocationPermission.denied) {
+        locationPermission = await Geolocator.requestPermission();
+        if (locationPermission == LocationPermission.deniedForever) {
+          MyDialog().alertLocationService(
+              context, 'ไม่อนุญาติเเชร์ Location', 'โปรดเเชร์ Location');
+        } else {
+          // Find LatLong
+          findLatLng();
+        }
+      } else {
+        if (locationPermission == LocationPermission.deniedForever) {
+          MyDialog().alertLocationService(
+              context, 'ไม่อนุญาติเเชร์ Location', 'โปรดเเชร์ Location');
+        } else {
+          //  Find LatLng
+          findLatLng();
+        }
+      }
+    } else {
+      print('Service Location Close');
+      MyDialog().alertLocationService(
+          context, 'Location ของคุณปิดอยู่ ?', 'กรุณาเปิด Location ของคุณ');
+    }
+  }
+
+  Future<Null> findLatLng() async {
+    print('findlatlong==work');
+    Position position = await findPosition();
+    setState(() {
+      lat = position.latitude;
+      lng = position.longitude;
+
+      print('lat === $lat , lng === $lng');
+    });
+  }
+
+  Future<Position> findPosition() async {
+    Position position;
+    try {
+      position = await Geolocator.getCurrentPosition();
+      return position;
+    } catch (e) {
+      return null;
+    }
+  }
+
   registerSubmit() async {
     var registerUrl = Uri.parse(BASEURL.apiRegister);
     final response = await http.post(registerUrl, body: {
@@ -36,7 +103,10 @@ class _RegisterPagesState extends State<RegisterPages> {
       "phone": phoneController.text,
       "address": addressController.text,
       "password": passwordController.text,
+      "lat": lat.toString(),
+      "lng": lng.toString(),
     });
+
     final data = jsonDecode(response.body);
     int value = data['value'];
     String message = data['message'];
@@ -45,23 +115,33 @@ class _RegisterPagesState extends State<RegisterPages> {
           barrierDismissible: false,
           context: context,
           builder: (context) => AlertDialog(
-                title: Text(
-                  "Notification",
-                  style: TextStyle(
-                    color: Color(0xfff09FF41),
-                  ),
+                content: Text(
+                  message,
+                  style: TextStyle(color: Colors.green),
                 ),
-                content: Text(message),
                 actions: [
                   TextButton(
-                      onPressed: () {
-                        Navigator.pushAndRemoveUntil(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => LoginPages()),
-                            (route) => false);
-                      },
-                      child: Text("OK"))
+                    onPressed: () {
+                      Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(builder: (context) => LoginPages()),
+                          (route) => false);
+                    },
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          alignment: Alignment.center,
+                          height: 30,
+                          width: 100,
+                          child: Text(
+                            "ตกลง",
+                            style: TextStyle(color: Colors.blue, fontSize: 15),
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
                 ],
               ));
       setState(() {});
@@ -70,24 +150,44 @@ class _RegisterPagesState extends State<RegisterPages> {
           barrierDismissible: false,
           context: context,
           builder: (context) => AlertDialog(
-                title: Text(
-                  "Notification",
-                  style: TextStyle(
-                    color: Color(0xfff09FF41),
-                  ),
+                content: Text(
+                  message,
+                  style: TextStyle(color: Colors.red),
                 ),
-                content: Text(message),
                 actions: [
                   TextButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      child: Text("OK"))
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          alignment: Alignment.center,
+                          height: 30,
+                          width: 100,
+                          child: Text(
+                            "ตกลง",
+                            style: TextStyle(color: Colors.blue, fontSize: 15),
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
                 ],
               ));
     }
     setState(() {});
   }
+
+  Set<Marker> setMarker() => <Marker>[
+        Marker(
+          markerId: MarkerId('id'),
+          position: LatLng(lat, lng),
+          infoWindow: InfoWindow(
+              title: 'คุณอยู่ที่นี่', snippet: 'Lat =$lat , lan = $lng'),
+        ),
+      ].toSet();
 
   @override
   Widget build(BuildContext context) {
@@ -160,6 +260,7 @@ class _RegisterPagesState extends State<RegisterPages> {
                       color: whiteColor),
                   width: MediaQuery.of(context).size.width,
                   child: TextField(
+                    keyboardType: TextInputType.emailAddress,
                     controller: emailController,
                     decoration: InputDecoration(
                       border: InputBorder.none,
@@ -187,6 +288,7 @@ class _RegisterPagesState extends State<RegisterPages> {
                       color: whiteColor),
                   width: MediaQuery.of(context).size.width,
                   child: TextField(
+                    keyboardType: TextInputType.phone,
                     controller: phoneController,
                     decoration: InputDecoration(
                       border: InputBorder.none,
@@ -214,6 +316,7 @@ class _RegisterPagesState extends State<RegisterPages> {
                       color: whiteColor),
                   width: MediaQuery.of(context).size.width,
                   child: TextField(
+                    keyboardType: TextInputType.streetAddress,
                     controller: addressController,
                     decoration: InputDecoration(
                       border: InputBorder.none,
@@ -222,6 +325,35 @@ class _RegisterPagesState extends State<RegisterPages> {
                           fontSize: 15, color: greyLightColor),
                     ),
                   ),
+                ),
+                SizedBox(
+                  height: 24,
+                ),
+                // Text('พิกัดเเผนที่ lat $lat  lng $lng'),
+                Text(
+                  'ตำเเหน่งที่อยู่',
+                  style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(
+                  height: 24,
+                ),
+
+                Container(
+                  width: double.infinity,
+                  height: 300,
+                  child: lat == null
+                      ? ShowProgress()
+                      : GoogleMap(
+                          initialCameraPosition: CameraPosition(
+                            target: LatLng(lat, lng),
+                            zoom: 16,
+                          ),
+                          onMapCreated: (controller) {},
+                          markers: setMarker(),
+                        ),
                 ),
                 SizedBox(
                   height: 24,
@@ -279,18 +411,33 @@ class _RegisterPagesState extends State<RegisterPages> {
                         showDialog(
                             context: context,
                             builder: (context) => AlertDialog(
-                                  title: Text(
-                                    "Notification !!",
-                                    style: boldTextStyle.copyWith(
-                                        color: Color(0xffFF0000)),
+                                  content: Text(
+                                    "กรุณากรอกข้อมูลให้ครบ",
+                                    style: TextStyle(color: Colors.red),
                                   ),
-                                  content: Text("กรุณา, กรอกข้อมูลให้ครบ"),
                                   actions: [
                                     TextButton(
-                                        onPressed: () {
-                                          Navigator.pop(context);
-                                        },
-                                        child: Text("OK"))
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Container(
+                                            alignment: Alignment.center,
+                                            height: 30,
+                                            width: 100,
+                                            child: Text(
+                                              "ตกลง",
+                                              style: TextStyle(
+                                                  color: Colors.blue,
+                                                  fontSize: 15),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    )
                                   ],
                                 ));
                       } else {

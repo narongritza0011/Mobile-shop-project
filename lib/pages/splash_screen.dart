@@ -43,24 +43,27 @@ class _SplashScreenState extends State<SplashScreen> {
           child: Column(
             children: [
               SizedBox(
-                height: 170,
+                height: 150,
               ),
               WidgetIlustration(
                 image: "assets/fulllogo2.png",
                 title: "ยินดีต้อนรับ",
                 subtitle1: "ซื้อสินค้าออนไลน์",
                 subtitle2: "ทุกที่ทุกเวลาที่คุณต้องการ",
-                child: ButtonPrimary(
-                  text: "เริ่มต้น",
-                  ontap: () {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => LoginPages(),
-                      ),
-                    );
-                  },
-                ),
+              ),
+              SizedBox(
+                height: 100,
+              ),
+              ButtonPrimary(
+                text: "เริ่มต้นใช้งาน",
+                ontap: () {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => LoginPages(),
+                    ),
+                  );
+                },
               )
             ],
           ),

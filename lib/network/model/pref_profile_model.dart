@@ -4,5 +4,8 @@ class PrefProfile {
   static String email = 'email';
   static String phone = 'phone';
   static String address = 'address';
+  static String latitude = 'lat';
+  static String longitude = 'lng';
   static String createdAt = 'created_at';
 }
+

@@ -2,23 +2,22 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:medhealth/main_page.dart';
 import 'package:medhealth/network/api/url_api.dart';
-import 'package:medhealth/network/model/history_model.dart';
+import 'package:medhealth/network/model/delivery_history_model.dart';
 import 'package:medhealth/network/model/pref_profile_model.dart';
-import 'package:medhealth/pages/simple_detail_history.dart';
-import 'package:medhealth/theme.dart';
+import 'package:medhealth/pages/simple_delivery_detail.dart';
 import 'package:medhealth/widget/button_primary.dart';
-import 'package:medhealth/widget/card_history.dart';
+import 'package:medhealth/widget/card_delivery_history.dart';
 import 'package:medhealth/widget/widget_ilustration.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
-class HistoryPages extends StatefulWidget {
+class DeliveryHistoryPage extends StatefulWidget {
   @override
-  _HistoryPagesState createState() => _HistoryPagesState();
+  _DeliveryHistoryPageState createState() => _DeliveryHistoryPageState();
 }
 
-class _HistoryPagesState extends State<HistoryPages> {
-  List<HistoryOrderModel> list = [];
+class _DeliveryHistoryPageState extends State<DeliveryHistoryPage> {
+  List<DeliveryHistoryOrderModel> list = [];
 
   String userID;
 
@@ -27,21 +26,21 @@ class _HistoryPagesState extends State<HistoryPages> {
     setState(() {
       userID = sharedPreferences.getString(PrefProfile.idUser);
     });
-    getHistory();
+    getDeliveryHistory();
   }
 
-  getHistory() async {
+  getDeliveryHistory() async {
     list.clear();
-    var urlHistory = Uri.parse(BASEURL.historyOrder + userID);
-    final response = await http.get(urlHistory);
+    var urlDeliveryHistory = Uri.parse(BASEURL.deliveryHistoryOrder + userID);
+    final response = await http.get(urlDeliveryHistory);
     if (response.statusCode == 200) {
       setState(() {
         final data = jsonDecode(response.body);
         for (Map item in data) {
-          list.add(HistoryOrderModel.fromJson(item));
+          list.add(DeliveryHistoryOrderModel.fromJson(item));
         }
         // print(data);
-        // print(data);
+        print(data);
       });
     }
   }
@@ -52,6 +51,7 @@ class _HistoryPagesState extends State<HistoryPages> {
     getPref();
   }
 
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: list.length == 0
@@ -92,17 +92,17 @@ class _HistoryPagesState extends State<HistoryPages> {
                   padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                   child: InkWell(
                     onTap: () {
-                      //  print('click');
+                      // print(list);
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => SimpleHistoryPage(
+                          builder: (context) => SimpleDeliveryHistoryPage(
                             listdata: x,
                           ),
                         ),
                       );
                     },
-                    child: CardHistory(
+                    child: CardDeliveryHistory(
                       model: x,
                     ),
                   ),

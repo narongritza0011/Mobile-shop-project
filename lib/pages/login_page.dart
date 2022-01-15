@@ -7,7 +7,6 @@ import 'package:medhealth/network/model/pref_profile_model.dart';
 import 'package:medhealth/pages/register_page.dart';
 import 'package:medhealth/theme.dart';
 import 'package:medhealth/widget/button_primary.dart';
-import 'package:medhealth/widget/general_logo_space.dart';
 import 'package:http/http.dart' as http;
 import 'package:medhealth/widget/logo_page_login.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -43,30 +42,42 @@ class _LoginPagesState extends State<LoginPages> {
     String email = data['email'];
     String phone = data['phone'];
     String address = data['address'];
+    String latitude = data['lat'];
+    String longitude = data['lng'];
     String createdAt = data['create_at'];
     if (value == 1) {
-      savePref(idUser, name, email, phone, address, createdAt);
+      savePref(idUser, name, email, phone, address,latitude,longitude, createdAt);
       showDialog(
           barrierDismissible: false,
           context: context,
           builder: (context) => AlertDialog(
-                title: Text(
-                  "Notification",
-                  style: TextStyle(
-                    color: Color(0xfff09FF41),
-                  ),
+                content: Text(
+                  message,
+                  style: TextStyle(color: Colors.green),
                 ),
-                content: Text(message),
                 actions: [
                   TextButton(
-                      onPressed: () {
-                        Navigator.pushAndRemoveUntil(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => MainPages()),
-                            (route) => false);
-                      },
-                      child: Text("OK"))
+                    onPressed: () {
+                      Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(builder: (context) => MainPages()),
+                          (route) => false);
+                    },
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          alignment: Alignment.center,
+                          height: 30,
+                          width: 100,
+                          child: Text(
+                            "ตกลง",
+                            style: TextStyle(color: Colors.blue, fontSize: 15),
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
                 ],
               ));
       setState(() {});
@@ -75,19 +86,30 @@ class _LoginPagesState extends State<LoginPages> {
           barrierDismissible: false,
           context: context,
           builder: (context) => AlertDialog(
-                title: Text(
-                  "Notification",
-                  style: TextStyle(
-                    color: Color(0xfff09FF41),
-                  ),
+                content: Text(
+                  message,
+                  style: TextStyle(color: Colors.red),
                 ),
-                content: Text(message),
                 actions: [
                   TextButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      child: Text("OK"))
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          alignment: Alignment.center,
+                          height: 30,
+                          width: 100,
+                          child: Text(
+                            "ตกลง",
+                            style: TextStyle(color: Colors.blue, fontSize: 15),
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
                 ],
               ));
       setState(() {});
@@ -95,7 +117,7 @@ class _LoginPagesState extends State<LoginPages> {
   }
 
   savePref(String idUser, String name, String email, String phone,
-      String address, String createdAt) async {
+      String address,String latitude,String longitude, String createdAt) async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     setState(() {
       sharedPreferences.setString(PrefProfile.idUser, idUser);
@@ -103,6 +125,8 @@ class _LoginPagesState extends State<LoginPages> {
       sharedPreferences.setString(PrefProfile.email, email);
       sharedPreferences.setString(PrefProfile.phone, phone);
       sharedPreferences.setString(PrefProfile.address, address);
+      sharedPreferences.setString(PrefProfile.latitude,latitude);
+      sharedPreferences.setString(PrefProfile.longitude, longitude);
       sharedPreferences.setString(PrefProfile.createdAt, createdAt);
     });
   }
@@ -155,6 +179,7 @@ class _LoginPagesState extends State<LoginPages> {
                       color: whiteColor),
                   width: MediaQuery.of(context).size.width,
                   child: TextField(
+                    keyboardType: TextInputType.emailAddress,
                     controller: emailController,
                     decoration: InputDecoration(
                       border: InputBorder.none,
@@ -218,16 +243,33 @@ class _LoginPagesState extends State<LoginPages> {
                         showDialog(
                             context: context,
                             builder: (context) => AlertDialog(
-                                  title: Text("Notification !!",
-                                      style: boldTextStyle.copyWith(
-                                          color: Color(0xffFF0000))),
-                                  content: Text("กรุณา, กรอกข้อมูลให้ครบ"),
+                                  content: Text(
+                                    "กรุณากรอกข้อมูลให้ครบ",
+                                    style: TextStyle(color: Colors.red),
+                                  ),
                                   actions: [
                                     TextButton(
-                                        onPressed: () {
-                                          Navigator.pop(context);
-                                        },
-                                        child: Text("OK"))
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Container(
+                                            alignment: Alignment.center,
+                                            height: 30,
+                                            width: 100,
+                                            child: Text(
+                                              "ตกลง",
+                                              style: TextStyle(
+                                                  color: Colors.blue,
+                                                  fontSize: 15),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    )
                                   ],
                                 ));
                       } else {

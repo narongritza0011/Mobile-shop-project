@@ -12,14 +12,16 @@ class CardCategory extends StatelessWidget {
       children: [
         Image.asset(
           imageCategory,
-          width: 65,
+          width: 55,
         ),
         SizedBox(
-          height: 10,
+          height: 7,
         ),
-        Text(
-          nameCategory,
-          style: mediumTextStyle.copyWith(fontSize: 10),
+        Expanded(
+          child: Text(
+            nameCategory,
+            style: regulerTextStyle.copyWith(fontSize: 12),
+          ),
         ),
       ],
     );

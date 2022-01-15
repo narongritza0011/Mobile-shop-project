@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:medhealth/network/model/pref_profile_model.dart';
+import 'package:medhealth/pages/edit_profile_page.dart';
 import 'package:medhealth/pages/login_page.dart';
 import 'package:medhealth/theme.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -10,16 +11,19 @@ class ProfilePages extends StatefulWidget {
 }
 
 class _ProfilePagesState extends State<ProfilePages> {
-  String fullName, createdDate, phone, email, address;
+  String fullName, phone, email, address, latitude, longitude, idUser;
   getPref() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     setState(() {
+      idUser = sharedPreferences.getString(PrefProfile.idUser);
       fullName = sharedPreferences.getString(PrefProfile.name);
-      createdDate = sharedPreferences.getString(PrefProfile.createdAt);
+      latitude = sharedPreferences.getString(PrefProfile.latitude);
+      longitude = sharedPreferences.getString(PrefProfile.longitude);
       phone = sharedPreferences.getString(PrefProfile.phone);
       email = sharedPreferences.getString(PrefProfile.email);
       address = sharedPreferences.getString(PrefProfile.address);
     });
+    // print(idUser);
   }
 
   signOut() async {
@@ -29,7 +33,6 @@ class _ProfilePagesState extends State<ProfilePages> {
     sharedPreferences.remove(PrefProfile.email);
     sharedPreferences.remove(PrefProfile.phone);
     sharedPreferences.remove(PrefProfile.address);
-    sharedPreferences.remove(PrefProfile.createdAt);
 
     Navigator.pushAndRemoveUntil(
         context,
@@ -82,7 +85,34 @@ class _ProfilePagesState extends State<ProfilePages> {
                       ),
                     ),
                   ],
-                )
+                ),
+              ],
+            ),
+          ),
+          SizedBox(
+            height: 20,
+          ),
+          InkWell(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => EditProfilePage(),
+                ),
+              );
+            },
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.edit,
+                  color: Colors.blue,
+                  size: 25,
+                ),
+                Text(
+                  'เเก้ไขโปรไฟล์',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
               ],
             ),
           ),
@@ -103,9 +133,17 @@ class _ProfilePagesState extends State<ProfilePages> {
                 SizedBox(
                   height: 8,
                 ),
-                Text(
-                  fullName,
-                  style: boldTextStyle.copyWith(fontSize: 18),
+                Row(
+                  children: [
+                    Icon(
+                      Icons.person,
+                      color: Colors.blue,
+                    ),
+                    Text(
+                      'longitude',
+                      style: boldTextStyle.copyWith(fontSize: 18),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -126,9 +164,17 @@ class _ProfilePagesState extends State<ProfilePages> {
                 SizedBox(
                   height: 8,
                 ),
-                Text(
-                  phone,
-                  style: boldTextStyle.copyWith(fontSize: 18),
+                Row(
+                  children: [
+                    Icon(
+                      Icons.phone_iphone,
+                      color: Colors.blue,
+                    ),
+                    Text(
+                      phone,
+                      style: boldTextStyle.copyWith(fontSize: 18),
+                    ),
+                  ],
                 )
               ],
             ),
@@ -150,9 +196,17 @@ class _ProfilePagesState extends State<ProfilePages> {
                 SizedBox(
                   height: 8,
                 ),
-                Text(
-                  email,
-                  style: boldTextStyle.copyWith(fontSize: 18),
+                Row(
+                  children: [
+                    Icon(
+                      Icons.mail_outline,
+                      color: Colors.blue,
+                    ),
+                    Text(
+                      email,
+                      style: boldTextStyle.copyWith(fontSize: 18),
+                    ),
+                  ],
                 )
               ],
             ),
@@ -173,10 +227,18 @@ class _ProfilePagesState extends State<ProfilePages> {
                 SizedBox(
                   height: 8,
                 ),
-                Text(
-                  address,
-                  style: boldTextStyle.copyWith(fontSize: 18),
-                )
+                Row(
+                  children: [
+                    Icon(
+                      Icons.home,
+                      color: Colors.blue,
+                    ),
+                    Text(
+                      address,
+                      style: boldTextStyle.copyWith(fontSize: 18),
+                    ),
+                  ],
+                ),
               ],
             ),
           ),

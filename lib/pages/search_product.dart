@@ -81,7 +81,7 @@ class _SearchProductState extends State<SearchProduct> {
                     height: 55,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
-                      color: greyBoldColor,
+                      color: Colors.brown,
                     ),
                     child: TextField(
                       autofocus: true,
@@ -93,7 +93,7 @@ class _SearchProductState extends State<SearchProduct> {
                           Icons.search,
                           color: whiteColor,
                         ),
-                        hintText: "",
+                        hintText: "ค้นหาสินค้า",
                         hintStyle: regulerTextStyle.copyWith(
                           color: whiteColor,
                         ),

@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:medhealth/network/model/history_model.dart';
-import 'package:medhealth/pages/detail_history.dart';
-import 'package:medhealth/pages/detail_order_history.dart';
+import 'package:medhealth/network/model/delivery_history_model.dart';
 import 'package:medhealth/theme.dart';
 
-class CardHistory extends StatelessWidget {
-  final HistoryOrderModel model;
-  CardHistory({this.model});
+class CardDeliveryHistory extends StatelessWidget {
+  final DeliveryHistoryOrderModel model;
+  CardDeliveryHistory({this.model});
 
   @override
   Widget build(BuildContext context) {
+
     String statusName = 'unknown';
     int statusColor = 0xffaabbcc;
     if (model.status == '1') {

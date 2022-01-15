@@ -5,6 +5,7 @@ import 'package:medhealth/network/model/pref_profile_model.dart';
 import 'package:medhealth/network/model/product_model.dart';
 import 'package:medhealth/pages/cart_pages.dart';
 import 'package:medhealth/pages/detail_product.dart';
+import 'package:medhealth/pages/edit_profile_page.dart';
 import 'package:medhealth/pages/search_product.dart';
 import 'package:medhealth/theme.dart';
 import 'package:medhealth/widget/card_category.dart';
@@ -160,7 +161,7 @@ class _HomePagesState extends State<HomePages> {
             height: 55,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10),
-              color: blackColor,
+              color: Colors.brown,
             ),
             child: TextField(
               enabled: false,
@@ -201,7 +202,7 @@ class _HomePagesState extends State<HomePages> {
                   setState(() {
                     index = i;
                     filter = true;
-                    print("$index, $filter");
+                    //    print("$index, $filter");
                   });
                 },
                 child: CardCategory(
@@ -211,7 +212,7 @@ class _HomePagesState extends State<HomePages> {
               );
             }),
         SizedBox(
-          height: 32,
+          height: 10,
         ),
         filter
             ? index == 7
@@ -253,9 +254,11 @@ class _HomePagesState extends State<HomePages> {
                   return InkWell(
                     onTap: () {
                       Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => DetailProduct(y)));
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => DetailProduct(y),
+                        ),
+                      );
                     },
                     child: CardProduct(
                       nameProduct: y.nameProduct,

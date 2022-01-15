@@ -42,23 +42,67 @@ class _DetailProductState extends State<DetailProduct> {
           barrierDismissible: false,
           context: context,
           builder: (context) => AlertDialog(
-                title: Text("Information"),
-                content: Text(message),
+                content: Text(
+                  message,
+                  style: TextStyle(color: Colors.green),
+                ),
                 actions: [
                   TextButton(
-                      onPressed: () {
-                        Navigator.pushAndRemoveUntil(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => MainPages()),
-                            (route) => false);
-                      },
-                      child: Text("OK"))
+                    onPressed: () {
+                      Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(builder: (context) => MainPages()),
+                          (route) => false);
+                    },
+                    child: Container(
+                      alignment: Alignment.center,
+                      height: 30,
+                      width: 100,
+                      color: Colors.green,
+                      child: Text(
+                        "ตกลง",
+                        style: TextStyle(
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  )
                 ],
               ));
       setState(() {});
     } else {
-      print(message);
+      showDialog(
+          barrierDismissible: false,
+          context: context,
+          builder: (context) => AlertDialog(
+                content: Text(
+                  message,
+                  style: TextStyle(color: Colors.yellow[900]),
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(builder: (context) => MainPages()),
+                          (route) => false);
+                    },
+                    child: Container(
+                      alignment: Alignment.center,
+                      height: 30,
+                      width: 100,
+                      color: Colors.green,
+                      child: Text(
+                        "ตกลง",
+                        style: TextStyle(
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  )
+                ],
+              ));
+
       setState(() {});
     }
   }

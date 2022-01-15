@@ -1,12 +1,12 @@
-class HistoryOrderModel {
+class DeliveryHistoryOrderModel {
   final String invoice;
   final String idOrder;
   final String idUser;
   final String orderAt;
   final String status;
-  final List<HistoryOrderDetailModel> detail;
+  final List<DeliveryHistoryOrderDetailModel> detail;
 
-  HistoryOrderModel({
+  DeliveryHistoryOrderModel({
     this.invoice,
     this.idOrder,
     this.idUser,
@@ -15,11 +15,11 @@ class HistoryOrderModel {
     this.detail,
   });
 
-  factory HistoryOrderModel.fromJson(Map<String, dynamic> dataOrder) {
+  factory DeliveryHistoryOrderModel.fromJson(Map<String, dynamic> dataOrder) {
     var list = dataOrder['detail'] as List;
-    List<HistoryOrderDetailModel> dataListDetail =
-        list.map((e) => HistoryOrderDetailModel.fromJson(e)).toList();
-    return HistoryOrderModel(
+    List<DeliveryHistoryOrderDetailModel> dataListDetail =
+        list.map((e) => DeliveryHistoryOrderDetailModel.fromJson(e)).toList();
+    return DeliveryHistoryOrderModel(
       invoice: dataOrder['invoice'],
       idOrder: dataOrder['id_orders'],
       idUser: dataOrder['id_user'],
@@ -30,7 +30,7 @@ class HistoryOrderModel {
   }
 }
 
-class HistoryOrderDetailModel {
+class DeliveryHistoryOrderDetailModel {
   final String idOrders;
   final String invoice;
   final String idProduct;
@@ -38,7 +38,7 @@ class HistoryOrderDetailModel {
   final String quantity;
   final String price;
 
-  HistoryOrderDetailModel({
+  DeliveryHistoryOrderDetailModel({
     this.idOrders,
     this.invoice,
     this.idProduct,
@@ -47,8 +47,8 @@ class HistoryOrderDetailModel {
     this.price,
   });
 
-  factory HistoryOrderDetailModel.fromJson(Map<String, dynamic> data) {
-    return HistoryOrderDetailModel(
+  factory DeliveryHistoryOrderDetailModel.fromJson(Map<String, dynamic> data) {
+    return DeliveryHistoryOrderDetailModel(
       idOrders: data['idOrders'],
       invoice: data['invoice'],
       idProduct: data['idProduct'],

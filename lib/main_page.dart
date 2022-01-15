@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:medhealth/pages/edit_profile_page.dart';
 import 'package:medhealth/pages/history_page.dart';
 import 'package:medhealth/pages/home_page.dart';
+import 'package:medhealth/pages/page_profile.dart';
 import 'package:medhealth/pages/profile_page.dart';
+import 'package:medhealth/pages/tabbar_page.dart';
+import 'package:medhealth/pages/tracking_page.dart';
 import 'package:medhealth/theme.dart';
 
 class MainPages extends StatefulWidget {
@@ -14,8 +18,9 @@ class _MainPagesState extends State<MainPages> {
 
   final _pageList = [
     HomePages(),
-    HistoryPages(),
-    ProfilePages(),
+    TabbarPage(),
+    TrackingPage(),
+    ProfileHomePage(),
   ];
 
   onTappedItem(int index) {
@@ -29,16 +34,21 @@ class _MainPagesState extends State<MainPages> {
     return Scaffold(
       body: _pageList.elementAt(_selectIndex),
       bottomNavigationBar: BottomNavigationBar(
+        elevation: 0,
+        backgroundColor: Colors.white,
         items: [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: "หน้าหลัก"),
           BottomNavigationBarItem(
-              icon: Icon(Icons.assignment), label: "การสั่งซื้อ"),
+              icon: Icon(Icons.view_list), label: "การสั่งซื้อ"),
           BottomNavigationBarItem(
-              icon: Icon(Icons.account_box_rounded), label: "บัญชี"),
+              icon: Icon(Icons.local_shipping), label: "ติดตามพัสดุ"),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.account_circle), label: "บัญชี"),
         ],
         currentIndex: _selectIndex,
         onTap: onTappedItem,
-        unselectedItemColor: blackColor,
+        unselectedItemColor: Colors.black,
+        selectedItemColor: Colors.brown,
       ),
     );
   }

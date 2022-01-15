@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:ffi';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:medhealth/main_page.dart';
@@ -9,6 +8,7 @@ import 'package:medhealth/network/model/pref_profile_model.dart';
 import 'package:medhealth/pages/success_checkout.dart';
 import 'package:medhealth/theme.dart';
 import 'package:medhealth/widget/button_primary.dart';
+import 'package:medhealth/widget/button_white.dart';
 import 'package:medhealth/widget/widget_ilustration.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
@@ -23,7 +23,10 @@ class CartPages extends StatefulWidget {
 class _CartPagesState extends State<CartPages> {
   final price = NumberFormat("#,##0", "EN_US");
   String userID, fullName, address, phone;
+
   int delivery = 0;
+  String dropdownvalue = 'จัดส่งธรรมดา';
+  var items = ['จัดส่งธรรมดา', 'จัดส่งด่วนพิเศษ', 'เก็บเงินปลายทาง'];
   getpref() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     setState(() {
@@ -31,6 +34,7 @@ class _CartPagesState extends State<CartPages> {
       fullName = sharedPreferences.getString(PrefProfile.name);
       address = sharedPreferences.getString(PrefProfile.address);
       phone = sharedPreferences.getString(PrefProfile.phone);
+      // print(PrefProfile.idUser);
     });
     getCart();
     cartTotalPrice();
@@ -90,7 +94,27 @@ class _CartPagesState extends State<CartPages> {
     }
   }
 
-  var sumPrice = "0";
+  checkout_delivery() async {
+    var urlCheckout = Uri.parse(BASEURL.checkoutDelivery);
+    final response = await http.post(urlCheckout, body: {
+      "idUser": userID,
+    });
+    final data = jsonDecode(response.body);
+    int value = data['value'];
+    String message = data['message'];
+    if (value == 1) {
+      Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+            builder: (context) => SuccessCheckout(),
+          ),
+          (route) => false);
+    } else {
+      print(message);
+    }
+  }
+
+  String sumPrice = '0';
   var totalPayment = 0;
   cartTotalPrice() async {
     var urlTotalPrice = Uri.parse(BASEURL.totalPriceCart + userID);
@@ -100,9 +124,20 @@ class _CartPagesState extends State<CartPages> {
       String total = data['Total'];
       setState(() {
         sumPrice = total;
-        totalPayment = sumPrice == null ? 0 : int.parse(sumPrice) + delivery;
+
+        //คำนวนค่าส่ง
+        if (int.parse(sumPrice) > 200) {
+          delivery = 0;
+          // print(0);
+        } else {
+          delivery = 60;
+          // print(60);
+        }
+
+        totalPayment = int.parse(sumPrice) + delivery;
       });
-      print(sumPrice);
+
+      // print(sumPrice);
     }
   }
 
@@ -121,7 +156,7 @@ class _CartPagesState extends State<CartPages> {
           ? SizedBox()
           : Container(
               padding: EdgeInsets.all(24),
-              height: 220,
+              height: 260,
               width: MediaQuery.of(context).size.width,
               decoration: BoxDecoration(
                 color: Color(0xfffcfcfc),
@@ -130,7 +165,7 @@ class _CartPagesState extends State<CartPages> {
                   topRight: Radius.circular(30),
                 ),
               ),
-              child: Column(
+              child: ListView(
                 children: [
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -164,20 +199,55 @@ class _CartPagesState extends State<CartPages> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        "บริการจัดส่ง",
+                        "ค่าบริการจัดส่ง",
                         style: regulerTextStyle.copyWith(
                             fontSize: 16, color: greyBoldColor),
                       ),
                       Text(
-                        delivery == 0 ? "ฟรี" : delivery,
+                        '$delivery',
                         style: boldTextStyle.copyWith(
-                          fontSize: 16,
-                        ),
+                            fontSize: 16, color: Colors.green),
                       ),
+                      // Text(
+                      //   delivery == 0 ? '000' : '$delivery',
+                      //   style: boldTextStyle.copyWith(
+                      //     fontSize: 16,
+                      //   ),
+                      // ),
                     ],
                   ),
+                  // Row(
+                  //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  //   children: [
+                  //     DropdownButton(
+                  //       items: items.map((itemsname) {
+                  //         return DropdownMenuItem(
+                  //           child: Text(
+                  //             itemsname,
+                  //             style: TextStyle(
+                  //               color: Colors.black,
+                  //             ),
+                  //           ),
+                  //           value: itemsname,
+                  //         );
+                  //       }).toList(),
+                  //       onChanged: (String newValue) {
+                  //         setState(() {
+                  //           dropdownvalue = newValue;
+                  //           print(dropdownvalue);
+                  //         });
+                  //       },
+                  //       value: dropdownvalue,
+                  //     ),
+                  //     Text(
+                  //       dropdownvalue,
+                  //       style: regulerTextStyle.copyWith(
+                  //           fontSize: 16, color: greyBoldColor),
+                  //     ),
+                  //   ],
+                  // ),
                   SizedBox(
-                    height: 16,
+                    height: 10,
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -215,7 +285,28 @@ class _CartPagesState extends State<CartPages> {
                       },
                       text: "สั่งซื้อสินค้า",
                     ),
-                  )
+                  ),
+
+                  Center(
+                    child: Text(
+                      'หรือ',
+                      style: regulerTextStyle.copyWith(
+                          fontSize: 16, color: greyBoldColor),
+                    ),
+                  ),
+
+                  Container(
+                    width: MediaQuery.of(context).size.width,
+                    child: ButtonWhite(
+                      ontap: () {
+                        checkout_delivery();
+                      },
+                      text: "สั่งซื้อ Delivery (เฉพาะสาขา ม.นเรศวร)",
+                    ),
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
                 ],
               ),
             ),
@@ -253,7 +344,7 @@ class _CartPagesState extends State<CartPages> {
                   padding: EdgeInsets.all(24),
                   margin: EdgeInsets.only(top: 30),
                   child: WidgetIlustration(
-                    image: "assets/undraw_shopping_app_flsj.png",
+                    image: "assets/empty_cart_ilustration.png",
                     title: "กรุณาเลือกซื้อสินค้า",
                     subtitle1: "ตะกร้าสินค้าว่างเปล่า",
                     subtitle2: "สินค้าน่าสนใจจาก ร้าน Petfood",

@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:medhealth/theme.dart';
 
-class ButtonPrimary extends StatelessWidget {
+class ButtonWhite extends StatelessWidget {
   final String text;
   final Function ontap;
 
-  ButtonPrimary({this.text, this.ontap});
+  ButtonWhite({this.text, this.ontap});
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -18,7 +17,7 @@ class ButtonPrimary extends StatelessWidget {
           style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
         style: ElevatedButton.styleFrom(
-          primary: Colors.brown,
+          primary: Colors.grey,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
           ),

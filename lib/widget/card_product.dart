@@ -16,9 +16,10 @@ class CardProduct extends StatelessWidget {
           borderRadius: BorderRadius.circular(10),
           boxShadow: [
             BoxShadow(
-                color: Colors.black.withOpacity(0.2),
-                blurRadius: 6,
-                offset: Offset(1, 1))
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 3,
+              offset: Offset(1, 1),
+            )
           ]),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -31,10 +32,13 @@ class CardProduct extends StatelessWidget {
           SizedBox(
             height: 16,
           ),
-          Text(
-            nameProduct,
-            style: regulerTextStyle,
-            textAlign: TextAlign.center,
+          Expanded(
+            child: Text(
+              nameProduct,
+              style: regulerTextStyle,
+              maxLines: 1,
+              textAlign: TextAlign.center,
+            ),
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
